@@ -12,7 +12,7 @@ namespace Game.Player.Movement
         public float? GroundAngle;    // 接地面の角度。 nullの場合、接地していない
 
         public float CoyoteTimer;               // コヨーテタイマー
-        public float JumpBufferTimer;           // ジャンプ入力猶予タイマー
+        public float JumpHoldTimer;             // 可変ジャンプタイマー
         public float IgnoreOneWayPlatformTimer; // 片側通行プラットフォーム無視タイマー
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Game.Player.Movement
@@ -20,18 +21,41 @@ namespace Game.Player.Movement
             _context = context ?? new MovementContext();
         }
 
-        public void Update(Transform player, MovementInput movementInput)
+        public void Update(float deltaTime, Transform player, MovementInput movementInput)
         {
             _context.Position = player.position;
 
+            UpdateTimer(deltaTime);
             // Prove Grounded
             Prove();
             // Calculate Velocity
-            UpdateVelocity(movementInput);
+            UpdateVelocity(deltaTime, movementInput);
             // Apply Movement
             ApplyMovement();
 
             player.position = _context.Position;
+        }
+
+        private void UpdateTimer(float deltaTime)
+        {
+            // Update various timers in the context
+            if (_context == null)
+            {
+                return;
+            }
+
+            if (_context.CoyoteTimer > 0f)
+            {
+                _context.CoyoteTimer -= deltaTime;
+            }
+            if (_context.JumpHoldTimer > 0f)
+            {
+                _context.JumpHoldTimer -= deltaTime;
+            }
+            if (_context.IgnoreOneWayPlatformTimer > 0f)
+            {
+                _context.IgnoreOneWayPlatformTimer -= deltaTime;
+            }
         }
     }
 }

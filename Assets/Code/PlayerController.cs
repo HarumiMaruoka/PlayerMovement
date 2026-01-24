@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        playerMovement.Update(transform, ReadMovementInput());
+        playerMovement.Update(Time.deltaTime, transform, ReadMovementInput());
     }
 
 #if DEBUG

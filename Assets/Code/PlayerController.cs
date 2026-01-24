@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        playerMovement.Update(ReadMovementInput();
+        playerMovement.Update(ReadMovementInput());
     }
 
     private MovementInput ReadMovementInput()

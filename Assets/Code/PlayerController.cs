@@ -5,19 +5,39 @@ public class PlayerController : MonoBehaviour
 {
     public InputActions inputActions;
     public PlayerMovement playerMovement;
+    public MovementConfig movementConfig;
 
     private void Awake()
     {
         inputActions = new InputActions();
-        inputActions.Enable();
         playerMovement = new PlayerMovement();
-        playerMovement.Start();
+
+        inputActions.Enable();
+        playerMovement.Start(movementConfig);
     }
 
     private void Update()
     {
-        playerMovement.Update(ReadMovementInput());
+        playerMovement.Update(transform, ReadMovementInput());
     }
+
+#if DEBUG
+    private void OnGUI()
+    {
+        if (playerMovement != null)
+        {
+            playerMovement.OnGUI();
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (playerMovement != null)
+        {
+            playerMovement.OnDrawGizmos(transform);
+        }
+    }
+#endif
 
     private MovementInput ReadMovementInput()
     {

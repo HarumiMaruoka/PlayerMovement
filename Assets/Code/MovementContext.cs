@@ -4,15 +4,15 @@ namespace Game.Player.Movement
 {
     public class MovementContext
     {
-        public Vector2 Position; // Œ»İ‚ÌˆÊ’u
-        public Vector2 Velocity; // Œ»İ‚Ì‘¬“x
+        public Vector2 Position; // ç¾åœ¨ã®ä½ç½®
+        public Vector2 Velocity; // ç¾åœ¨ã®é€Ÿåº¦
 
-        public bool IsGrounded;       // Ú’n‚µ‚Ä‚¢‚é‚©
-        public Vector2? GroundNormal; // Ú’n–Ê‚Ì–@üB null‚Ìê‡AÚ’n‚µ‚Ä‚¢‚È‚¢
-        public float? GroundAngle;    // Ú’n–Ê‚ÌŠp“xB null‚Ìê‡AÚ’n‚µ‚Ä‚¢‚È‚¢
+        public bool IsGrounded;       // æ¥åœ°ã—ã¦ã„ã‚‹ã‹
+        public Vector2? GroundNormal; // æ¥åœ°é¢ã®æ³•ç·šã€‚ nullã®å ´åˆã€æ¥åœ°ã—ã¦ã„ãªã„
+        public float? GroundAngle;    // æ¥åœ°é¢ã®è§’åº¦ã€‚ nullã®å ´åˆã€æ¥åœ°ã—ã¦ã„ãªã„
 
-        public float CoyoteTimer;               // ƒRƒˆ[ƒeƒ^ƒCƒ}[
-        public float JumpBufferTimer;           // ƒWƒƒƒ“ƒv“ü—Í—P—\ƒ^ƒCƒ}[
-        public float IgnoreOneWayPlatformTimer; // •Ğ‘¤’Êsƒvƒ‰ƒbƒgƒtƒH[ƒ€–³‹ƒ^ƒCƒ}[
+        public float CoyoteTimer;               // ã‚³ãƒ¨ãƒ¼ãƒ†ã‚¿ã‚¤ãƒãƒ¼
+        public float JumpBufferTimer;           // ã‚¸ãƒ£ãƒ³ãƒ—å…¥åŠ›çŒ¶äºˆã‚¿ã‚¤ãƒãƒ¼
+        public float IgnoreOneWayPlatformTimer; // ç‰‡å´é€šè¡Œãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ ç„¡è¦–ã‚¿ã‚¤ãƒãƒ¼
     }
 }

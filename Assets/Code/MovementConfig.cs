@@ -35,7 +35,7 @@ namespace Game.Player.Movement
         public float AirControlAcceleration = 10f;
         public float AirControlDeceleration = 15f;
         [Range(0f, 1f)]
-        public float GravityReductionPercent; // ジャンプボタンホールド時の重力軽減率
+        public float GravityReductionPercent; // 繧ｸ繝｣繝ｳ繝励�懊ち繝ｳ繝帙�ｼ繝ｫ繝画凾縺ｮ驥榊鴨霆ｽ貂帷紫
 
         [Header("Times")]
         public float CoyoteTime;

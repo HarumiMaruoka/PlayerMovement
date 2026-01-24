@@ -4,10 +4,10 @@ namespace Game.Player.Movement
 {
     public partial class PlayerMovement
     {
-        // Ú’n”»’è
+        // æ¥åœ°åˆ¤å®š
         private void Prove()
         {
-
+            
         }
     }
 }

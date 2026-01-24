@@ -4,10 +4,10 @@ namespace Game.Player.Movement
 {
     public partial class PlayerMovement
     {
-        // ˆÚ“®AÕ“Ë‰ğŒˆ
+        // ç§»å‹•ã€è¡çªè§£æ±º
         private void ApplyMovement()
         {
-
+            
         }
     }
 }

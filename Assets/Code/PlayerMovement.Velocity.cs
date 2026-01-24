@@ -4,10 +4,10 @@ namespace Game.Player.Movement
 {
     public partial class PlayerMovement
     {
-        // –Ú•W‘¬“xŒvŽZ
+        // ç›®æ¨™é€Ÿåº¦è¨ˆç®—
         private void UpdateVelocity(MovementInput movementInput)
         {
-
+            
         }
     }
 }

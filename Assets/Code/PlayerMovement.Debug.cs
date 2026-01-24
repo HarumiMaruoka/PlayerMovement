@@ -6,12 +6,12 @@ namespace Game.Player.Movement
     {
         public void OnGUI()
         {
-            // GUI•\¦F‘¬“xAÚ’nó‘Ô‚È‚Ç
+            // GUIè¡¨ç¤ºï¼šé€Ÿåº¦ã€æ¥åœ°çŠ¶æ…‹ãªã©
         }
 
         public void OnDrawGizmos(Transform player)
         {
-            // Gizmos•\¦FÚ’n”»’è‚Ì‰Â‹‰»‚È‚Ç
+            // Gizmosè¡¨ç¤ºï¼šæ¥åœ°åˆ¤å®šã®å¯è¦–åŒ–ãªã©
         }
     }
 }

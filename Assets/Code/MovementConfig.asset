@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 839953154ba5d5744bd6d0e82727d3c0, type: 3}
+  m_Name: MovementConfig
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Player.Movement.MovementConfig
+  Skin: 0.02
+  ColliderSize: {x: 0.9, y: 1.8}
+  ColliderOffset: {x: 0, y: 0.02}
+  StepHeight: 0.2
+  MaxGroundAngle: 45
+  GroundRayLength: 0.1
+  GroundProbeOffset: {x: 0, y: 0.5}
+  GroundLayerMask:
+    serializedVersion: 2
+    m_Bits: 8
+  OneWayPlatformLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
+  WalkMaxSpeed: 4
+  WalkAcceleration: 20
+  WalkDeceleration: 25
+  WalkTurnSpeed: 30
+  SprintMaxSpeed: 8
+  SprintAcceleration: 30
+  SprintDeceleration: 35
+  SprintTurnSpeed: 40
+  JumpForce: 10
+  Gravity: 20
+  AirMaxFallSpeed: 25
+  AirHorizontalMaxSpeed: 100
+  AirControlAcceleration: 10
+  AirControlDeceleration: 15
+  AirTurnSpeed: 15
+  JumpBufferGravityMultiplier: 0
+  CoyoteTime: 0
+  JumpHoldTimeRemaining: 0
+  ShowGizmos: 1
+  ShowGroundProbeGizmos: 1
+  ShowMovementCapsuleCastGizmos: 1
+  ShowStepUpCapsuleCastGizmos: 0
+  ShowGroundSnapCapsuleCastGizmos: 0

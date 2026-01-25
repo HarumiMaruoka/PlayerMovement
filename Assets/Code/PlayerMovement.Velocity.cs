@@ -55,7 +55,7 @@ namespace Game.Player.Movement
                 }
 
                 // 最大落下速度制限
-                if (_context.Velocity.y < _config.AirMaxFallSpeed)
+                if (_context.Velocity.y > _config.AirMaxFallSpeed)
                 {
                     _context.Velocity.y = _config.AirMaxFallSpeed;
                 }

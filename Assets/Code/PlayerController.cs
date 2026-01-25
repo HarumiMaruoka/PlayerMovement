@@ -4,13 +4,12 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public InputActions inputActions;
-    public PlayerMovement playerMovement;
+    public PlayerMovement playerMovement = new PlayerMovement();
     public MovementConfig movementConfig;
 
     private void Awake()
     {
         inputActions = new InputActions();
-        playerMovement = new PlayerMovement();
 
         inputActions.Enable();
         playerMovement.Start(movementConfig);
@@ -21,7 +20,7 @@ public class PlayerController : MonoBehaviour
         playerMovement.Update(Time.deltaTime, transform, ReadMovementInput());
     }
 
-#if DEBUG
+#if UNITY_EDITOR
     private void OnGUI()
     {
         if (playerMovement != null)
@@ -34,7 +33,7 @@ public class PlayerController : MonoBehaviour
     {
         if (playerMovement != null)
         {
-            playerMovement.OnDrawGizmos(transform);
+            playerMovement.OnDrawGizmos(transform, movementConfig);
         }
     }
 #endif

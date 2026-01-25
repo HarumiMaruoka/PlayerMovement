@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Game.Player.Movement
 {
+    [CreateAssetMenu(fileName = "MovementConfig", menuName = "Game/Player/MovementConfig")]
     public class MovementConfig : ScriptableObject
     {
         [Header("Collision Settings")]
@@ -45,5 +46,13 @@ namespace Game.Player.Movement
         public float CoyoteTime;
         public float JumpHoldTimeRemaining;
 
+#if UNITY_EDITOR
+        [Header("Debug")]
+        public bool ShowGizmos = true;
+        public bool ShowGroundProbeGizmos = true;
+        public bool ShowMovementCapsuleCastGizmos = true;
+        public bool ShowStepUpCapsuleCastGizmos = true;
+        public bool ShowGroundSnapCapsuleCastGizmos = true;
+#endif
     }
 }

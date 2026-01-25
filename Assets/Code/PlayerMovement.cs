@@ -31,7 +31,7 @@ namespace Game.Player.Movement
             // Calculate Velocity
             UpdateVelocity(deltaTime, movementInput);
             // Apply Movement
-            ApplyMovement();
+            ApplyMovement(deltaTime);
 
             player.position = _context.Position;
         }

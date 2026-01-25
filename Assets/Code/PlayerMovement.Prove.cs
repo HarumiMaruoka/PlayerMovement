@@ -7,7 +7,8 @@ namespace Game.Player.Movement
         // 接地判定
         private void Prove()
         {
-            var hit = ProbeGroundCircleCast(_context.Position, out var groundProbeOrigin, out var groundProbeRadius,
+            var position = _context.Position + _config.ColliderOffset;
+            var hit = ProbeGroundCircleCast(position, _config, out var groundProbeOrigin, out var groundProbeRadius,
                 out var direction, out var groundProbeLength, out int layerMask);
 
             var angle = hit.collider != null ? Vector2.Angle(hit.normal, Vector2.up) : (float?)null;
@@ -36,15 +37,15 @@ namespace Game.Player.Movement
         }
 
         // Gizmoでも使えるようにするために分離
-        private RaycastHit2D ProbeGroundCircleCast(Vector2 position, out Vector2 origin, out float radius, out Vector2 direction, out float length, out int layerMask)
+        private RaycastHit2D ProbeGroundCircleCast(Vector2 position, MovementConfig config, out Vector2 origin, out float radius, out Vector2 direction, out float length, out int layerMask)
         {
-            var colliderSize = _config.ColliderSize;
-            var colliderCenter = position + _config.ColliderOffset;
-            origin = colliderCenter + new Vector2(0f, -colliderSize.y / 2f) + _config.GroundProbeOffset;
-            length = _config.GroundRayLength + _config.Skin;
+            var colliderSize = config.ColliderSize;
+            var colliderCenter = position + config.ColliderOffset;
+            origin = colliderCenter + new Vector2(0f, -colliderSize.y / 2f) + config.GroundProbeOffset;
+            length = config.GroundRayLength + config.Skin;
             radius = colliderSize.x / 2f;
             direction = Vector2.down;
-            layerMask = _config.GroundLayerMask | _config.OneWayPlatformLayerMask;
+            layerMask = config.GroundLayerMask | config.OneWayPlatformLayerMask;
             return Physics2D.CircleCast(origin, radius, direction, length, layerMask);
         }
     }

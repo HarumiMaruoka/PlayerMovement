@@ -42,7 +42,7 @@ namespace Game.Player.Movement
 
             var hit = Physics2D.CapsuleCast(rayOrigin, raySize, capsuleDirection, rayAngle, rayDirection, rayLength, layerMask);
 
-            if (hit.collider == null)
+            if (hit.collider == null || hit.distance <= 0f)
             {
                 // 衝突なし
                 position += delta;
@@ -51,33 +51,30 @@ namespace Game.Player.Movement
             {
                 // 衝突あり
                 // ステップアップ処理
-                if (stepUpHeight > 0f)
+                var stepUpOrigin = rayOrigin + new Vector2(0f, stepUpHeight);
+                var stepUpHit = Physics2D.CapsuleCast(stepUpOrigin, raySize, capsuleDirection, rayAngle, rayDirection, rayLength, layerMask);
+                if (stepUpHit.collider == null || stepUpHit.distance <= 0f)
                 {
-                    var stepUpOrigin = rayOrigin + new Vector2(0f, stepUpHeight);
-                    var stepUpHit = Physics2D.CapsuleCast(stepUpOrigin, raySize, capsuleDirection, rayAngle, rayDirection, rayLength, layerMask);
-                    if (stepUpHit.collider == null)
-                    {
-                        // ステップアップ成功
-                        position += new Vector2(0f, stepUpHeight);
-                        position += delta;
-                    }
-                    else
-                    {
-                        // ステップアップ失敗、通常の衝突処理へ
-                        // 衝突点まで移動
-                        var distanceToHit = hit.distance - _config.Skin;
-                        position += delta.normalized * distanceToHit;
-                    }
+                    // ステップアップ成功
+                    position += new Vector2(0f, stepUpHeight);
+                    position += delta;
+                }
+                else
+                {
+                    // ステップアップ失敗、通常の衝突処理へ
+                    // 衝突点まで移動
+                    var distanceToHit = Mathf.Max(0f, hit.distance - _config.Skin);
+                    position += delta.normalized * distanceToHit;
                 }
             }
 
             // 地面吸着処理
             // 下に向かってレイキャストを飛ばし、地面に吸着させる。長さはステップ高さ分。
-            var groundSnapOrigin = position + _config.ColliderOffset + new Vector2(0f, stepUpHeight);
+            var groundSnapOrigin = position + _config.ColliderOffset;
             var groundSnapHit = Physics2D.CapsuleCast(groundSnapOrigin, raySize, capsuleDirection, rayAngle, Vector2.down, stepUpHeight + _config.Skin, layerMask);
-            if (groundSnapHit.collider != null)
+            if (groundSnapHit.collider != null && groundSnapHit.distance > 0f)
             {
-                var distanceToGround = groundSnapHit.distance - _config.Skin;
+                var distanceToGround = Mathf.Max(0f, groundSnapHit.distance - _config.Skin);
                 position += Vector2.down * distanceToGround;
             }
 
@@ -99,7 +96,7 @@ namespace Game.Player.Movement
             var rayLength = delta.magnitude + _config.Skin;
             var layerMask = _config.GroundLayerMask;
             var hit = Physics2D.CapsuleCast(rayOrigin, raySize, capsuleDirection, rayAngle, rayDirection, rayLength, layerMask);
-            if (hit.collider == null)
+            if (hit.collider == null || hit.distance <= 0f)
             {
                 // 衝突なし
                 position += delta;
@@ -109,7 +106,7 @@ namespace Game.Player.Movement
                 // 衝突あり
                 // 衝突点まで移動
                 var distanceToHit = hit.distance - _config.Skin;
-                position -= delta.normalized * distanceToHit;
+                position += delta.normalized * distanceToHit;
             }
 
             _context.Position = position;

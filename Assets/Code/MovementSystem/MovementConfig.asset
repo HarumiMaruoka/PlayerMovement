@@ -34,15 +34,15 @@ MonoBehaviour:
   SprintDeceleration: 35
   SprintTurnSpeed: 40
   JumpForce: 10
-  Gravity: 20
+  Gravity: 35
   AirMaxFallSpeed: 25
   AirHorizontalMaxSpeed: 100
   AirControlAcceleration: 10
   AirControlDeceleration: 15
   AirTurnSpeed: 15
-  JumpBufferGravityMultiplier: 0
-  CoyoteTime: 0
-  JumpHoldTimeRemaining: 0
+  JumpBufferGravityMultiplier: 0.3
+  CoyoteTime: 0.1
+  JumpHoldTimeRemaining: 0.3
   ShowGizmos: 1
   ShowGroundProbeGizmos: 1
   ShowMovementCapsuleCastGizmos: 1

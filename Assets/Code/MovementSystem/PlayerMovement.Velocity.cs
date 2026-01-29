@@ -41,6 +41,7 @@ namespace Game.Player.Movement
                     _context.Velocity.y = _config.JumpForce;
                     _context.CoyoteTimer = 0f; // コヨーテタイマーを消費
                     _context.JumpHoldTimer = _config.JumpHoldTimeRemaining; // 可変ジャンプタイマーをリセット
+                    _context.IsGrounded = false; // 接地状態を解除
                 }
                 // 重力加算
                 else if (_context.JumpHoldTimer > 0f && movementInput.Jump)
@@ -70,6 +71,7 @@ namespace Game.Player.Movement
                     // ジャンプ入力がある場合、垂直速度をジャンプ速度に設定
                     _context.Velocity.y = _config.JumpForce;
                     _context.JumpHoldTimer = _config.JumpHoldTimeRemaining; // 可変ジャンプタイマーをリセット
+                    _context.IsGrounded = false; // 接地状態を解除
                 }
             }
         }

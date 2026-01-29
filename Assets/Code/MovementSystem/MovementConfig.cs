@@ -43,8 +43,8 @@ namespace Game.Player.Movement
         public float JumpBufferGravityMultiplier; // ジャンプボタンホールド時の重力軽減率
 
         [Header("Times")]
-        public float CoyoteTime;
-        public float JumpHoldTimeRemaining;
+        public float CoyoteTime = 0.1f;
+        public float JumpHoldTimeRemaining = 0.2f;
 
 #if UNITY_EDITOR
         [Header("Debug")]

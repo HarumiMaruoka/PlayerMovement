@@ -1,3 +1,4 @@
+using Game.Debug;
 using Game.Player.Movement;
 using UnityEngine;
 
@@ -6,9 +7,14 @@ public class PlayerController : MonoBehaviour
     public InputActions inputActions;
     public PlayerMovement playerMovement = new PlayerMovement();
     public MovementConfig movementConfig;
+    public Recorder recorder = new Recorder();
+
+    public const float DeltaTime = 1f / 60f;
+    public bool isRecord = false;
 
     private void Awake()
     {
+        Application.targetFrameRate = 60;
         inputActions = new InputActions();
 
         inputActions.Enable();
@@ -17,7 +23,9 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        playerMovement.Update(Time.deltaTime, transform, ReadMovementInput());
+        var input = ReadMovementInput();
+        playerMovement.Update(DeltaTime, transform, input);
+        if (isRecord) recorder.Record(new Recorder.Data() { Position = transform.position });
     }
 
 #if UNITY_EDITOR
@@ -34,6 +42,14 @@ public class PlayerController : MonoBehaviour
         if (playerMovement != null)
         {
             playerMovement.OnDrawGizmos(transform, movementConfig);
+        }
+    }
+
+    public void OnDestroy()
+    {
+        if (isRecord)
+        {
+            recorder.Save("recording.json");
         }
     }
 #endif

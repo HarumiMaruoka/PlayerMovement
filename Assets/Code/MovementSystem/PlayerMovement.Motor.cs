@@ -56,8 +56,10 @@ namespace Game.Player.Movement
                 if (stepUpHit.collider == null || stepUpHit.distance <= 0f)
                 {
                     // ステップアップ成功
-                    position += new Vector2(0f, stepUpHeight);
-                    position += delta;
+                    var stepUpDistanceToHit = Mathf.Max(0f, hit.distance - _config.Skin);
+                    var stepUpDelta = delta + new Vector2(0f, stepUpHeight);
+                    var stepUpLength = stepUpDelta.magnitude + _config.Skin;
+                    position += stepUpDelta.normalized * stepUpLength;
                 }
                 else
                 {
@@ -76,9 +78,34 @@ namespace Game.Player.Movement
             {
                 var distanceToGround = Mathf.Max(0f, groundSnapHit.distance - _config.Skin);
                 position += Vector2.down * distanceToGround;
+
+                // 移動先が急こう配の上り坂の場合
+                var groundAngle = Vector2.Angle(groundSnapHit.normal, Vector2.up);
+                if (groundAngle > _config.MaxGroundAngle)
+                {
+                    var movementDir = delta.normalized;
+                    var uphillDir = new Vector2(groundSnapHit.normal.y, -groundSnapHit.normal.x);
+                    if (Vector2.Dot(movementDir, uphillDir) > 0f)
+                    {
+                        position = _context.Position;
+                    }
+
+                    // 急こう配の上り坂を登ろうとする場合、坂方向にレイキャストを飛ばして衝突判定を行い、衝突点まで移動させる
+                    var uphillHit = Physics2D.CapsuleCast(rayOrigin, raySize, capsuleDirection, rayAngle, rayDirection, rayLength, layerMask);
+                    if (uphillHit.collider != null && uphillHit.distance > 0f)
+                    {
+                        var uphillDistanceToHit = Mathf.Max(0f, uphillHit.distance - _config.Skin);
+                        position += delta.normalized * uphillDistanceToHit;
+                    }
+                }
             }
 
             _context.Position = position;
+
+#if UNITY_EDITOR
+            _context.Delta = delta;
+            _context.LastMoveHitNormal = hit.collider != null ? hit.normal : null;
+#endif
         }
 
         private void ApplyAirMovement(float deltaTime)
@@ -95,6 +122,7 @@ namespace Game.Player.Movement
             var rayDirection = delta.normalized;
             var rayLength = delta.magnitude + _config.Skin;
             var layerMask = _config.GroundLayerMask;
+
             var hit = Physics2D.CapsuleCast(rayOrigin, raySize, capsuleDirection, rayAngle, rayDirection, rayLength, layerMask);
             if (hit.collider == null || hit.distance <= 0f)
             {
@@ -103,13 +131,43 @@ namespace Game.Player.Movement
             }
             else
             {
-                // 衝突あり
-                // 衝突点まで移動
-                var distanceToHit = hit.distance - _config.Skin;
-                position += delta.normalized * distanceToHit;
+                // 衝突あり：衝突点直前まで進めて、残りを衝突面に沿ってスライドさせる
+                var moveToHitDistance = Mathf.Max(0f, hit.distance - _config.Skin - 0.01f);
+                var moveToHit = rayDirection * moveToHitDistance;
+                position += moveToHit;
+
+                var remainingDelta = delta - moveToHit;
+
+                // remainingDelta を衝突面に沿う成分に投影
+                var collisionNormal = hit.normal;
+                var slideDelta = (Vector2)Vector3.ProjectOnPlane(remainingDelta, collisionNormal);
+
+                // 再度レイキャストで衝突判定
+                rayOrigin = position + _config.ColliderOffset;
+                rayDirection = slideDelta.normalized;
+                rayLength = slideDelta.magnitude + _config.Skin;
+                var slideHit = Physics2D.CapsuleCast(rayOrigin, raySize, capsuleDirection, rayAngle, rayDirection, rayLength, layerMask);
+                if (slideHit.collider == null || slideHit.distance <= 0f)
+                {
+                    // 衝突なし
+                    position += slideDelta;
+                }
+                else
+                {
+                    // 衝突あり：衝突点直前まで進めるのみ
+                    var slideToHitDistance = Mathf.Max(0f, slideHit.distance - _config.Skin);
+                    var slideToHit = rayDirection * slideToHitDistance;
+                    position += slideToHit;
+                }
             }
 
             _context.Position = position;
+
+
+#if UNITY_EDITOR
+            _context.Delta = delta;
+            _context.LastMoveHitNormal = hit.collider != null ? hit.normal : null;
+#endif
         }
     }
 }

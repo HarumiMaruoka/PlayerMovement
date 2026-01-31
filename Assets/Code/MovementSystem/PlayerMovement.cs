@@ -8,9 +8,9 @@ namespace Game.Player.Movement
         private MovementConfig _config;
         private MovementContext _context;
 
+        // Initialization
         public void Start(MovementConfig config, MovementContext context = null)
         {
-            // Initialization
             if (!config)
             {
                 throw new System.ArgumentNullException(nameof(config), "MovementConfig cannot be null");

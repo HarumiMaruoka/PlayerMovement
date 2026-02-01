@@ -12,6 +12,7 @@ namespace Game.Player.Movement
         public float StepHeight = 0.2f;
         public float MaxGroundAngle = 45f;
         public float GroundRayLength = 0.1f;
+        public float GroundSnapRayLength = 0.3f;
         public Vector2 GroundProbeOffset = new Vector2(0f, -0.9f);
         public LayerMask GroundLayerMask;
         public LayerMask OneWayPlatformLayerMask;

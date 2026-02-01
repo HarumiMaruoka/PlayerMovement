@@ -73,29 +73,36 @@ namespace Game.Player.Movement
             // 地面吸着処理
             // 下に向かってレイキャストを飛ばし、地面に吸着させる。長さはステップ高さ分。
             var groundSnapOrigin = position + _config.ColliderOffset;
-            var groundSnapHit = Physics2D.CapsuleCast(groundSnapOrigin, raySize, capsuleDirection, rayAngle, Vector2.down, stepUpHeight + _config.Skin, layerMask);
+            var groundSnapHit = Physics2D.CapsuleCast(groundSnapOrigin, raySize, capsuleDirection, rayAngle, Vector2.down, _config.GroundSnapRayLength + _config.Skin, layerMask);
             if (groundSnapHit.collider != null && groundSnapHit.distance > 0f)
             {
                 var distanceToGround = Mathf.Max(0f, groundSnapHit.distance - _config.Skin);
                 position += Vector2.down * distanceToGround;
 
-                // 移動先が急こう配の上り坂の場合
+                // 移動先が急こう配の上り坂の場合（下り坂ならするりと降りられるようにする）
                 var groundAngle = Vector2.Angle(groundSnapHit.normal, Vector2.up);
                 if (groundAngle > _config.MaxGroundAngle)
                 {
-                    var movementDir = delta.normalized;
-                    var uphillDir = new Vector2(groundSnapHit.normal.y, -groundSnapHit.normal.x);
-                    if (Vector2.Dot(movementDir, uphillDir) > 0f)
+                    // 移動方向が上り坂方向かどうかを判定
+                    var movementDir = delta.sqrMagnitude > 0f ? delta.normalized : Vector2.zero;
+
+                    var n = groundSnapHit.normal;
+                    var slopeTangent = new Vector2(n.y, -n.x).normalized; // 斜面接線（どちら向きかは未確定）
+                    if (Vector2.Dot(slopeTangent, Vector2.up) < 0f)
                     {
-                        position = _context.Position;
+                        slopeTangent = -slopeTangent; // 上り方向に揃える
                     }
 
-                    // 急こう配の上り坂を登ろうとする場合、坂方向にレイキャストを飛ばして衝突判定を行い、衝突点まで移動させる
+                    var isTryingToGoUphill = Vector2.Dot(movementDir, slopeTangent) > 0f;
+
+                    // 急こう配の上り坂を登ろうとする場合、坂方向にレイキャストを飛ばして衝突判定を行い、衝突点まで移動させる。
                     var uphillHit = Physics2D.CapsuleCast(rayOrigin, raySize, capsuleDirection, rayAngle, rayDirection, rayLength, layerMask);
-                    if (uphillHit.collider != null && uphillHit.distance > 0f)
+                    if (isTryingToGoUphill && uphillHit.collider != null && uphillHit.distance > 0f)
                     {
                         var uphillDistanceToHit = Mathf.Max(0f, uphillHit.distance - _config.Skin);
+                        position = _context.Position; // リセット
                         position += delta.normalized * uphillDistanceToHit;
+                        _context.Velocity = Vector2.zero; // 衝突したら速度をゼロにする
                     }
                 }
             }

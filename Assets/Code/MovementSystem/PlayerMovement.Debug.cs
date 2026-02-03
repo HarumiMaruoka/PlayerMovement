@@ -60,7 +60,7 @@ namespace Game.Player.Movement
             Row("Velocity", V2(_context.Velocity));
 
             // 移動量
-            Row("Delta", V2(_context.Delta));
+            Row("Delta", OptV2(_context.Delta));
             // 移動解決時の衝突情報
             Row("LastMoveHitNormal", OptV2(_context.LastMoveHitNormal));
 

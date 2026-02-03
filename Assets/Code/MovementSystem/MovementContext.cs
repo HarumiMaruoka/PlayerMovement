@@ -15,7 +15,7 @@ namespace Game.Player.Movement
         public float IgnoreOneWayPlatformTimer; // 片側通行プラットフォーム無視タイマー
 
 #if UNITY_EDITOR
-        internal Vector2 Delta;
+        internal Vector2? Delta;
         internal Vector2? LastMoveHitNormal; // nullの場合、衝突していない
 #endif
     }

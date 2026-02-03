@@ -1,5 +1,7 @@
+using Game.Debug;
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Game.Player.Movement
 {
@@ -13,6 +15,7 @@ namespace Game.Player.Movement
                 return;
             }
 
+
             if (_context.IsGrounded)
             {
                 ApplyGroundMovement(deltaTime);
@@ -25,6 +28,18 @@ namespace Game.Player.Movement
 
         private void ApplyGroundMovement(float deltaTime)
         {
+
+#if UNITY_EDITOR
+            _context.LastMoveHitNormal = null;
+
+            // if (Keyboard.current.aKey.wasReleasedThisFrame)
+            // {
+            //     UnityEditor.EditorApplication.isPaused = true;
+            // }
+
+            // ConsoleUtility.ClearConsole();
+#endif
+
             var position = _context.Position;
             var delta = _context.Velocity * deltaTime;
             var groundNormal = _context.GroundNormal.Value;
@@ -46,6 +61,7 @@ namespace Game.Player.Movement
             {
                 // 衝突なし
                 position += delta;
+                UnityEngine.Debug.Log("A");
             }
             else
             {
@@ -55,11 +71,17 @@ namespace Game.Player.Movement
                 var stepUpHit = Physics2D.CapsuleCast(stepUpOrigin, raySize, capsuleDirection, rayAngle, rayDirection, rayLength, layerMask);
                 if (stepUpHit.collider == null || stepUpHit.distance <= 0f)
                 {
-                    // ステップアップ成功
+                    // ステップアップ成功（段差ぶん持ち上げたうえで、元のヒット直前まで前進）
                     var stepUpDistanceToHit = Mathf.Max(0f, hit.distance - _config.Skin);
                     var stepUpDelta = delta + new Vector2(0f, stepUpHeight);
-                    var stepUpLength = stepUpDelta.magnitude + _config.Skin;
-                    position += stepUpDelta.normalized * stepUpLength;
+
+                    var stepUpDir = stepUpDelta.sqrMagnitude > 0f ? stepUpDelta.normalized : Vector2.zero;
+
+                    // 「上に上げる」+「前に進む（距離は元のhitに合わせる）」に分ける
+                    position += new Vector2(0f, stepUpHeight);
+                    position += stepUpDir * stepUpDistanceToHit;
+
+                    UnityEngine.Debug.Log("B");
                 }
                 else
                 {
@@ -67,6 +89,7 @@ namespace Game.Player.Movement
                     // 衝突点まで移動
                     var distanceToHit = Mathf.Max(0f, hit.distance - _config.Skin);
                     position += delta.normalized * distanceToHit;
+                    UnityEngine.Debug.Log("C");
                 }
             }
 
@@ -78,11 +101,23 @@ namespace Game.Player.Movement
             {
                 var distanceToGround = Mathf.Max(0f, groundSnapHit.distance - _config.Skin);
                 position += Vector2.down * distanceToGround;
+                UnityEngine.Debug.Log("D");
 
-                // 移動先が急こう配の上り坂の場合（下り坂ならするりと降りられるようにする）
+                // 移動先が急な坂道の場合
                 var groundAngle = Vector2.Angle(groundSnapHit.normal, Vector2.up);
                 if (groundAngle > _config.MaxGroundAngle)
                 {
+                    // 足場の上かどうかを判定（足場なら何もしない）
+                    var platformRaycastHit = Physics2D.Raycast(groundSnapHit.point + new Vector2(0f, 0.01f), Vector2.down, distance: 0.02f);
+
+                    if (platformRaycastHit.collider != null && platformRaycastHit.distance > 0f && Vector2.Dot(platformRaycastHit.normal, Vector2.up) > 0.9f)
+                    {
+                        // 足場の上なので何もしない
+                        _context.Position = position;
+                        UnityEngine.Debug.Log("E");
+                        return;
+                    }
+
                     // 移動方向が上り坂方向かどうかを判定
                     var movementDir = delta.sqrMagnitude > 0f ? delta.normalized : Vector2.zero;
 
@@ -93,26 +128,21 @@ namespace Game.Player.Movement
                         slopeTangent = -slopeTangent; // 上り方向に揃える
                     }
 
+                    // 急こう配の上り坂を登ろうとする場合、通常の衝突処理へ
                     var isTryingToGoUphill = Vector2.Dot(movementDir, slopeTangent) > 0f;
 
-                    // 急こう配の上り坂を登ろうとする場合、坂方向にレイキャストを飛ばして衝突判定を行い、衝突点まで移動させる。
                     var uphillHit = Physics2D.CapsuleCast(rayOrigin, raySize, capsuleDirection, rayAngle, rayDirection, rayLength, layerMask);
                     if (isTryingToGoUphill && uphillHit.collider != null && uphillHit.distance > 0f)
                     {
-                        var uphillDistanceToHit = Mathf.Max(0f, uphillHit.distance - _config.Skin);
                         position = _context.Position; // リセット
-                        position += delta.normalized * uphillDistanceToHit;
-                        _context.Velocity = Vector2.zero; // 衝突したら速度をゼロにする
+                        var distanceToHit = Mathf.Max(0f, hit.distance - _config.Skin);
+                        position += delta.normalized * distanceToHit;
+                        UnityEngine.Debug.Log("F");
                     }
                 }
             }
 
             _context.Position = position;
-
-#if UNITY_EDITOR
-            _context.Delta = delta;
-            _context.LastMoveHitNormal = hit.collider != null ? hit.normal : null;
-#endif
         }
 
         private void ApplyAirMovement(float deltaTime)
@@ -161,10 +191,13 @@ namespace Game.Player.Movement
                 }
                 else
                 {
-                    // 衝突あり：衝突点直前まで進めるのみ
+                    // 衝突あり：衝突点直前まで進めるのみ（+ 衝突面からskin分だけ離す）
                     var slideToHitDistance = Mathf.Max(0f, slideHit.distance - _config.Skin);
                     var slideToHit = rayDirection * slideToHitDistance;
                     position += slideToHit;
+
+                    // 「左右(=法線方向)」マージン：衝突面からskin分だけ離す
+                    position -= slideHit.normal * _config.Skin;
                 }
             }
 
@@ -172,8 +205,8 @@ namespace Game.Player.Movement
 
 
 #if UNITY_EDITOR
-            _context.Delta = delta;
-            _context.LastMoveHitNormal = hit.collider != null ? hit.normal : null;
+            _context.Delta = null;
+            _context.LastMoveHitNormal = null;
 #endif
         }
     }

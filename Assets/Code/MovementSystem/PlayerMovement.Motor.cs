@@ -10,12 +10,6 @@ namespace Game.Player.Movement
         // 移動、衝突解決
         private void ApplyMovement(float deltaTime)
         {
-            if (_context.Velocity == Vector2.zero)
-            {
-                return;
-            }
-
-
             if (_context.IsGrounded)
             {
                 ApplyGroundMovement(deltaTime);
@@ -37,7 +31,7 @@ namespace Game.Player.Movement
             //     UnityEditor.EditorApplication.isPaused = true;
             // }
 
-            // ConsoleUtility.ClearConsole();
+            ConsoleUtility.ClearConsole();
 #endif
 
             var position = _context.Position;
@@ -71,15 +65,9 @@ namespace Game.Player.Movement
                 var stepUpHit = Physics2D.CapsuleCast(stepUpOrigin, raySize, capsuleDirection, rayAngle, rayDirection, rayLength, layerMask);
                 if (stepUpHit.collider == null || stepUpHit.distance <= 0f)
                 {
-                    // ステップアップ成功（段差ぶん持ち上げたうえで、元のヒット直前まで前進）
-                    var stepUpDistanceToHit = Mathf.Max(0f, hit.distance - _config.Skin);
+                    // ステップアップ成功
                     var stepUpDelta = delta + new Vector2(0f, stepUpHeight);
-
-                    var stepUpDir = stepUpDelta.sqrMagnitude > 0f ? stepUpDelta.normalized : Vector2.zero;
-
-                    // 「上に上げる」+「前に進む（距離は元のhitに合わせる）」に分ける
-                    position += new Vector2(0f, stepUpHeight);
-                    position += stepUpDir * stepUpDistanceToHit;
+                    position += stepUpDelta;
 
                     UnityEngine.Debug.Log("B");
                 }
@@ -147,6 +135,9 @@ namespace Game.Player.Movement
 
         private void ApplyAirMovement(float deltaTime)
         {
+#if UNITY_EDITOR
+            ConsoleUtility.ClearConsole();
+#endif
             // 空中移動
             var position = _context.Position;
             var delta = _context.Velocity * deltaTime;
@@ -165,13 +156,15 @@ namespace Game.Player.Movement
             {
                 // 衝突なし
                 position += delta;
+                UnityEngine.Debug.Log("A");
             }
             else
             {
                 // 衝突あり：衝突点直前まで進めて、残りを衝突面に沿ってスライドさせる
-                var moveToHitDistance = Mathf.Max(0f, hit.distance - _config.Skin - 0.01f);
+                var moveToHitDistance = Mathf.Max(0f, hit.distance - _config.Skin);
                 var moveToHit = rayDirection * moveToHitDistance;
                 position += moveToHit;
+                UnityEngine.Debug.Log("B");
 
                 var remainingDelta = delta - moveToHit;
 
@@ -188,6 +181,7 @@ namespace Game.Player.Movement
                 {
                     // 衝突なし
                     position += slideDelta;
+                    UnityEngine.Debug.Log("C");
                 }
                 else
                 {
@@ -198,6 +192,7 @@ namespace Game.Player.Movement
 
                     // 「左右(=法線方向)」マージン：衝突面からskin分だけ離す
                     position -= slideHit.normal * _config.Skin;
+                    UnityEngine.Debug.Log("D");
                 }
             }
 

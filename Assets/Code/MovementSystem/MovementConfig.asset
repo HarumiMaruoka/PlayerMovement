@@ -16,7 +16,7 @@ MonoBehaviour:
   ColliderSize: {x: 0.9, y: 1.8}
   ColliderOffset: {x: 0, y: 0.02}
   StepHeight: 0.2
-  MaxGroundAngle: 45
+  MaxGroundAngle: 46
   GroundRayLength: 0.1
   GroundSnapRayLength: 0.3
   GroundProbeOffset: {x: 0, y: 0.5}

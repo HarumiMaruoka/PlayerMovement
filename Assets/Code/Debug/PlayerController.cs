@@ -1,6 +1,7 @@
 using Game.Debug;
 using Game.Player.Movement;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class PlayerController : MonoBehaviour
 
     public const float DeltaTime = 1f / 60f;
     public bool isRecord = false;
+
+    private bool isStepMode = false;
 
     private void Awake()
     {
@@ -23,9 +26,33 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        var input = ReadMovementInput();
-        playerMovement.Update(DeltaTime, transform, input);
-        if (isRecord) recorder.Record(new Recorder.Data() { Position = transform.position });
+        if (Keyboard.current == null)
+        {
+            return;
+        }
+
+        if (Keyboard.current.pKey.wasPressedThisFrame)
+        {
+            isStepMode = !isStepMode;
+        }
+
+        if (isStepMode)
+        {
+            // ステップモード
+            if (Keyboard.current.enterKey.wasPressedThisFrame)
+            {
+                var input = ReadMovementInput();
+                playerMovement.Update(DeltaTime, transform, input);
+                if (isRecord) recorder.Record(new Recorder.Data() { Position = transform.position });
+            }
+        }
+        else
+        {
+            // 通常
+            var input = ReadMovementInput();
+            playerMovement.Update(DeltaTime, transform, input);
+            if (isRecord) recorder.Record(new Recorder.Data() { Position = transform.position });
+        }
     }
 
 #if UNITY_EDITOR

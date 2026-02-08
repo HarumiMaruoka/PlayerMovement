@@ -1,100 +1,103 @@
-using Game.Debug;
 using Game.Player.Movement;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+namespace Game.Player
 {
-    public InputActions inputActions;
-    public PlayerMovement playerMovement = new PlayerMovement();
-    public MovementConfig movementConfig;
-    public Recorder recorder = new Recorder();
-
-    public const float DeltaTime = 1f / 60f;
-    public bool isRecord = false;
-
-    private bool isStepMode = false;
-
-    private void Awake()
+    public class PlayerController : MonoBehaviour
     {
-        Application.targetFrameRate = 60;
-        inputActions = new InputActions();
+        private PlayerMovement playerMovement = new PlayerMovement();
+        private InputSystem_Actions inputActions;
 
-        inputActions.Enable();
-        playerMovement.Start(movementConfig);
-    }
+        public const float DeltaTime = 60f / 1f;
+        public MovementConfig config;
 
-    private void Update()
-    {
-        if (Keyboard.current == null)
+        public bool IsStepMode = false;
+        private float repeatDelay = 0.1f;
+        private float initialRepeatDelay = 1.0f;
+        private float nextRepeatTime = 0.0f;
+
+        private bool isInitialized = false;
+
+        void Start()
         {
-            return;
-        }
-
-        if (Keyboard.current.pKey.wasPressedThisFrame)
-        {
-            isStepMode = !isStepMode;
-        }
-
-        if (isStepMode)
-        {
-            // „Çπ„ÉÜ„ÉÉ„Éó„É¢„Éº„Éâ
-            if (Keyboard.current.enterKey.wasPressedThisFrame)
+            if (!config)
             {
-                var input = ReadMovementInput();
-                playerMovement.Update(DeltaTime, transform, input);
-                if (isRecord) recorder.Record(new Recorder.Data() { Position = transform.position });
+                throw new UnassignedReferenceException("MovementConfig Ç™ê›íËÇ≥ÇÍÇƒÇ¢Ç‹ÇπÇÒÅBInspector Ç≈äÑÇËìñÇƒÇƒÇ≠ÇæÇ≥Ç¢ÅB");
+            }
+
+            playerMovement.Start(config);
+            inputActions = new InputSystem_Actions();
+            isInitialized = true;
+        }
+
+        void Update()
+        {
+            if (!isInitialized)
+            {
+                return;
+            }
+
+            if (Keyboard.current == null || Mouse.current == null)
+            {
+                UnityEngine.Debug.LogWarning($"ÉLÅ[É{Å[ÉhÇ‹ÇΩÇÕÉ}ÉEÉXÇ™åüèoÇ≥ÇÍÇ‹ÇπÇÒÇ≈ÇµÇΩÅB{{ Keyboard: {Keyboard.current == null}, Mouse: {Mouse.current == null} }}");
+                return;
+            }
+
+            if (Mouse.current.rightButton.wasPressedThisFrame)
+            {
+                IsStepMode = !IsStepMode;
+            }
+
+            if (!IsStepMode)
+            {
+                playerMovement.Update(DeltaTime, transform, ReadInput());
+                return;
+            }
+
+            if (Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                playerMovement.Update(DeltaTime, transform, ReadInput());
+                nextRepeatTime = initialRepeatDelay;
+            }
+            else if (Mouse.current.leftButton.IsPressed())
+            {
+                nextRepeatTime -= Time.unscaledDeltaTime;
+
+                if (nextRepeatTime < 0f)
+                {
+                    playerMovement.Update(DeltaTime, transform, ReadInput());
+                    nextRepeatTime = repeatDelay;
+                }
             }
         }
-        else
+
+        private void OnGUI()
         {
-            // ÈÄöÂ∏∏
-            var input = ReadMovementInput();
-            playerMovement.Update(DeltaTime, transform, input);
-            if (isRecord) recorder.Record(new Recorder.Data() { Position = transform.position });
+            if (playerMovement != null)
+            {
+                playerMovement.DebugParams.IsStepMode = IsStepMode;
+                playerMovement.OnGUI();
+            }
         }
-    }
 
-#if UNITY_EDITOR
-    private void OnGUI()
-    {
-        if (playerMovement != null)
+        private void OnDrawGizmos()
         {
-            playerMovement.OnGUI();
+            if (playerMovement != null && transform && config)
+            {
+                playerMovement.OnDrawGizmos(transform, config);
+            }
         }
-    }
 
-    private void OnDrawGizmos()
-    {
-        if (playerMovement != null)
+        MovementInput ReadInput()
         {
-            playerMovement.OnDrawGizmos(transform, movementConfig);
+            Vector2 move = inputActions.Player.Move.ReadValue<Vector2>();
+            bool jump = inputActions.Player.Jump.IsPressed();
+            bool sprint = inputActions.Player.Sprint.IsPressed();
+            bool drop = move.y < -0.5f && inputActions.Player.Jump.triggered;
+
+            return new MovementInput() { };
         }
-    }
-
-    public void OnDestroy()
-    {
-        if (isRecord)
-        {
-            recorder.Save("recording.json");
-        }
-    }
-#endif
-
-    private MovementInput ReadMovementInput()
-    {
-        Vector2 move = inputActions.Player.Move.ReadValue<Vector2>();
-        bool jump = inputActions.Player.Jump.IsPressed();
-        bool sprint = inputActions.Player.Sprint.IsPressed();
-        bool drop = move.y < -0.5f && inputActions.Player.Jump.triggered;
-
-
-        return new MovementInput
-        {
-            Move = move,
-            Jump = jump,
-            Sprint = sprint,
-            Drop = drop
-        };
     }
 }

@@ -8,12 +8,12 @@ namespace Game.Player.Movement
         [Header("Collision Settings")]
         public float Skin = 0.02f;
         public Vector2 ColliderSize = new Vector2(0.9f, 1.8f);
-        public Vector2 ColliderOffset = new Vector2(0f, 0.9f);
+        public Vector2 ColliderOffset = new Vector2(0f, 0f);
         public float StepHeight = 0.2f;
         public float MaxGroundAngle = 45f;
+        public Vector2 GroundProveSize;
+        public Vector2 GroundProbeOffset;
         public float GroundSnapRayLength = 0.3f;
-        public Vector2 GroundProbeOffset = new Vector2(0f, -0.9f);
-        public Vector2 GroundProveSize = new Vector2(0.9f, 0.2f);
         public float GroundRayLength = 0.1f;
         public LayerMask GroundLayerMask;
         public LayerMask OneWayPlatformLayerMask;
@@ -41,11 +41,12 @@ namespace Game.Player.Movement
         public float AirControlAcceleration = 10f;
         public float AirControlDeceleration = 15f;
         public float AirTurnSpeed = 15f;
-        [Range(0f, 1f)]
-        public float JumpBufferGravityMultiplier; // ジャンプボタンホールド時の重力軽減率
+        [Range(0f, 1f), Tooltip("繧ｸ繝｣繝ｳ繝励�懊ち繝ｳ繝帙�ｼ繝ｫ繝画凾縺ｮ驥榊鴨霆ｽ貂帷紫")]
+        public float JumpBufferGravityMultiplier;
 
         [Header("Times")]
         public float CoyoteTime = 0.1f;
+        public float IgnoreOneWayPlatformTime = 0.2f;
         public float JumpHoldTimeRemaining = 0.2f;
     }
 }

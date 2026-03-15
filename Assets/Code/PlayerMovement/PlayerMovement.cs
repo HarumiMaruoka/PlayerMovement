@@ -27,7 +27,7 @@ namespace Game.Player.Movement
 
             UpdateTimer(deltaTime);
             // Prove Grounded
-            GroundProve();
+            GroundProve(movementInput);
             // Calculate Velocity
             UpdateVelocity(deltaTime, movementInput);
             // Apply Movement

@@ -1,5 +1,4 @@
 using Game.Player.Movement;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,7 +9,7 @@ namespace Game.Player
         private PlayerMovement playerMovement = new PlayerMovement();
         private InputSystem_Actions inputActions;
 
-        public const float DeltaTime = 60f / 1f;
+        public const float DeltaTime = 1f / 60f;
         public MovementConfig config;
 
         public bool IsStepMode = false;
@@ -22,13 +21,16 @@ namespace Game.Player
 
         void Start()
         {
+            Application.targetFrameRate = 60;
+
             if (!config)
             {
-                throw new UnassignedReferenceException("MovementConfig ‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñBInspector ‚ÅŠ„‚è“–‚Ä‚Ä‚­‚¾‚³‚¢B");
+                throw new UnassignedReferenceException("MovementConfig ãŒè¨­å®šã•ã‚Œã¦ã„ã¾ã›ã‚“ã€‚Inspector ã§å‰²ã‚Šå½“ã¦ã¦ãã ã•ã„ã€‚");
             }
 
             playerMovement.Start(config);
             inputActions = new InputSystem_Actions();
+            inputActions.Enable();
             isInitialized = true;
         }
 
@@ -41,7 +43,7 @@ namespace Game.Player
 
             if (Keyboard.current == null || Mouse.current == null)
             {
-                UnityEngine.Debug.LogWarning($"ƒL[ƒ{[ƒh‚Ü‚½‚Íƒ}ƒEƒX‚ªŒŸo‚³‚ê‚Ü‚¹‚ñ‚Å‚µ‚½B{{ Keyboard: {Keyboard.current == null}, Mouse: {Mouse.current == null} }}");
+                UnityEngine.Debug.LogWarning($"ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰ã¾ãŸã¯ãƒã‚¦ã‚¹ãŒæ¤œå‡ºã•ã‚Œã¾ã›ã‚“ã§ã—ãŸã€‚{{ Keyboard: {Keyboard.current == null}, Mouse: {Mouse.current == null} }}");
                 return;
             }
 
@@ -97,7 +99,13 @@ namespace Game.Player
             bool sprint = inputActions.Player.Sprint.IsPressed();
             bool drop = move.y < -0.5f && inputActions.Player.Jump.triggered;
 
-            return new MovementInput() { };
+            return new MovementInput()
+            {
+                Move = move,
+                Jump = jump,
+                Sprint = sprint,
+                Drop = drop,
+            };
         }
     }
 }

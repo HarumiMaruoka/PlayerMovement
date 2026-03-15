@@ -7,6 +7,7 @@ namespace Game.Player.Movement
         public Vector2 Velocity; // 現在の速度
 
         public bool IsGrounded;       // 接地しているか
+        public Vector2? GroundPoint;  // 接地面の座標。 nullの場合、接地していない
         public Vector2? GroundNormal; // 接地面の法線。 nullの場合、接地していない
         public float? GroundAngle;    // 接地面の角度。 nullの場合、接地していない
 

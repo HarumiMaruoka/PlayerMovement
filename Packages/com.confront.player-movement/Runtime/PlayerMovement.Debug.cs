@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 
-namespace Game.Player.Movement
+namespace Confront.Player.Movement
 {
     public partial class PlayerMovement
     {

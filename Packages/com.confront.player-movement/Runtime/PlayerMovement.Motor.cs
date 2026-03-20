@@ -1,10 +1,7 @@
-using Game.Debug;
 using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 
-namespace Game.Player.Movement
+namespace Confront.Player.Movement
 {
     public partial class PlayerMovement
     {
@@ -23,7 +20,6 @@ namespace Game.Player.Movement
 
         private void GroundMove(float deltaTime)
         {
-            ConsoleUtility.ClearConsole();
             DebugParams.DebugPoints.Clear();
 
             var position = _context.Position;
@@ -252,6 +248,11 @@ namespace Game.Player.Movement
                             var slideMoveDistance = Mathf.Max(0f, slideHit.distance - _config.Skin);
                             position += slide.normalized * slideMoveDistance;
                         }
+                    }
+
+                    if (_context.Velocity.y > 0f)
+                    {
+                        _context.Velocity.y = 0f;
                     }
                 }
                 else

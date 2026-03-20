@@ -1,0 +1,10 @@
+{
+  "name": "com.confront.player-movement",
+  "displayName": "Player Movement",
+  "version": "1.0.0",
+  "unity": "6000.0",
+  "description": "Confront's Player Movement System",
+  "dependencies": {
+    "com.unity.inputsystem": "1.19.0"
+  }
+}

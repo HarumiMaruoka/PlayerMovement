@@ -17,9 +17,9 @@ MonoBehaviour:
   ColliderOffset: {x: 0, y: 0}
   StepHeight: 0.2
   MaxGroundAngle: 45
-  GroundSnapRayLength: 0.3
-  GroundProbeOffset: {x: 0, y: -0.85}
   GroundProveSize: {x: 0.9, y: 0.02}
+  GroundProbeOffset: {x: 0, y: -0.85}
+  GroundSnapRayLength: 0.3
   GroundRayLength: 0.1
   GroundLayerMask:
     serializedVersion: 2
@@ -44,4 +44,5 @@ MonoBehaviour:
   AirTurnSpeed: 15
   JumpBufferGravityMultiplier: 0
   CoyoteTime: 0.1
+  IgnoreOneWayPlatformTime: 0.2
   JumpHoldTimeRemaining: 0.2

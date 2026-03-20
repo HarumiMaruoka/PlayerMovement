@@ -1,0 +1,6 @@
+{
+	"name": "PlayerMovement",
+	"references": [
+	"Unity.InputSystem"
+	]
+}

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Game.Player.Movement
+namespace Confront.Player.Movement
 {
     public class DebugParams
     {

@@ -1,13 +1,11 @@
-using Game.Player.Movement;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Game.Player
+namespace Confront.Player.Movement.Tests
 {
     public class PlayerController : MonoBehaviour
     {
         private PlayerMovement playerMovement = new PlayerMovement();
-        private InputSystem_Actions inputActions;
 
         public const float DeltaTime = 1f / 60f;
         public MovementConfig config;
@@ -29,8 +27,6 @@ namespace Game.Player
             }
 
             playerMovement.Start(config);
-            inputActions = new InputSystem_Actions();
-            inputActions.Enable();
             isInitialized = true;
         }
 
@@ -94,10 +90,13 @@ namespace Game.Player
 
         MovementInput ReadInput()
         {
-            Vector2 move = inputActions.Player.Move.ReadValue<Vector2>();
-            bool jump = inputActions.Player.Jump.IsPressed();
-            bool sprint = inputActions.Player.Sprint.IsPressed();
-            bool drop = move.y < -0.5f && inputActions.Player.Jump.triggered;
+            Vector2 move = new Vector2(
+                (Keyboard.current.dKey.isPressed ? 1 : 0) - (Keyboard.current.aKey.isPressed ? 1 : 0),
+                (Keyboard.current.wKey.isPressed ? 1 : 0) - (Keyboard.current.sKey.isPressed ? 1 : 0)
+            );
+            bool drop = move.y < -0.5f && Keyboard.current.spaceKey.wasPressedThisFrame;
+            bool jump = move.y >= -0.5f && Keyboard.current.spaceKey.IsPressed();
+            bool sprint = Keyboard.current.leftShiftKey.isPressed;
 
             return new MovementInput()
             {

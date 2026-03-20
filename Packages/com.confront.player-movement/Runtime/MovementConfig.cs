@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game.Player.Movement
+namespace Confront.Player.Movement
 {
     [CreateAssetMenu(fileName = "MovementConfig", menuName = "Game/Player/MovementConfig")]
     public class MovementConfig : ScriptableObject
